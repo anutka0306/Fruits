@@ -1,6 +1,13 @@
 <template>
   <div>
     <p>Fruits Component</p>
+    <div class="filters__section">
+      <input type="text" v-model="searchName" placeholder="Search by name">
+      <select v-model="searchFamily">
+        <option v-for="(family, index) in families" :key="index" :value="family.family">{{ family.family }}</option>
+      </select>
+      <button @click="clearFilter">Clear</button>
+    </div>
     <div v-for="fruit in paginatedData" :key="fruit.id">
       <Fruit :fruit="fruit"/>
     </div>
@@ -22,8 +29,10 @@ export default {
   data() {
     return {
       fruits:[],
+      families:[],
       pageNumber: 0,
-
+      searchName:'',
+      searchFamily:'',
     }
   },
   props:{
@@ -39,6 +48,10 @@ export default {
     },
     prevPage(){
       this.pageNumber--;
+    },
+    clearFilter(){
+      this.searchName = '';
+      this.searchFamily = '';
     }
   },
   computed:{
@@ -50,14 +63,34 @@ export default {
     paginatedData(){
       const start = this.pageNumber * this.size,
           end = start + this.size;
-      return this.fruits
-          .slice(start, end);
-    }
+      if(this.searchName.length > 0 && this.searchFamily.length > 0){
+        return this.fruits.filter(fruit => {
+          return fruit.name.toUpperCase().indexOf(this.searchName.toUpperCase()) !== -1 && fruit.family.toUpperCase().indexOf(this.searchFamily.toUpperCase()) !== -1;
+        });
+      }
+      else if(this.searchName.length > 0){
+        return this.fruits.filter(fruit => {
+          return fruit.name.toUpperCase().indexOf(this.searchName.toUpperCase()) !== -1;
+        });
+      }
+      else if(this.searchFamily.length > 0){
+        return this.fruits.filter(fruit => {
+          return fruit.family.toUpperCase().indexOf(this.searchFamily.toUpperCase()) !== -1;
+        });
+      }
+      else {
+        return this.fruits
+            .slice(start, end);
+      }
+    },
+
   },
 
   async mounted() {
     let { data } = await axios.get('/api/getfruits')
     this.fruits = data.fruits;
+    this.families = data.families;
+    console.log(this.families);
   },
   name: "FruitsComponent"
 }

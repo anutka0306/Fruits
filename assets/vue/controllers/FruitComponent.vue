@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ fruit.name }}
+    {{ fruit.name }} - {{ fruit.family}}
   </div>
 </template>
 

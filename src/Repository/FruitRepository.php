@@ -39,6 +39,15 @@ class FruitRepository extends ServiceEntityRepository
         }
     }
 
+    public function getFamilies() {
+        return $this->createQueryBuilder('f')
+            ->select('f.family')
+            ->orderBy('f.family', 'ASC')
+            ->groupBy('f.family')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
 //    /**
 //     * @return Fruit[] Returns an array of Fruit objects
 //     */

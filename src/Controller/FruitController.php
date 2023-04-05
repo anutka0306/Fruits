@@ -22,23 +22,16 @@ class FruitController extends AbstractController
     #[Route('/', name: 'app_fruit')]
     public function index(Request $request): Response
     {
-        $fruits = $this->fruitRepository->findAll();
-        $pagination = $this->paginator->paginate(
-            $fruits,
-            $request->query->getInt('page', 1),
-            10
-        );
-        return $this->render('fruit/index.html.twig', [
-            'fruits' => $fruits,
-            'pagination' => $pagination
-        ]);
+        return $this->render('fruit/index.html.twig');
     }
 
     #[Route('/api/getfruits', name: 'getfruits', methods: 'get')]
     public function getFruits(){
         $fruits = $this->fruitRepository->findAll();
+        $families = $this->fruitRepository->getFamilies();
         return $this->json([
             'fruits' => $fruits,
+            'families' => $families,
         ]);
     }
 }
