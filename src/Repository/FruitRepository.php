@@ -39,13 +39,21 @@ class FruitRepository extends ServiceEntityRepository
         }
     }
 
-    public function getFamilies() {
+    public function getFamilies(): array|int|string
+    {
         return $this->createQueryBuilder('f')
             ->select('f.family')
             ->orderBy('f.family', 'ASC')
             ->groupBy('f.family')
             ->getQuery()
             ->getArrayResult();
+    }
+
+    public function getFruitsByIds($apiIds){
+        return $this->createQueryBuilder('f')
+            ->where('f.api_id IN (:apiIds)')->setParameter('apiIds', $apiIds)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**
