@@ -1,7 +1,7 @@
 <template>
   <div class="fav__item">
     <div class="fav__item_name">
-      <h3>{{ fruit.name }}</h3>
+      <h3 class="text-info-emphasis fw-semibold text-uppercase">{{ fruit.name }}</h3>
       <small>{{ fruit.family }}</small>
     </div>
     <div class="fav__item_nutritions">
@@ -10,7 +10,7 @@
       <p>Fat: <b>{{ fruit.fat }}</b></p>
       <p>Sugar: <b>{{fruit.sugar}}</b></p>
     </div>
-    <button @click="removeFavorite(fruit.apiId)"><i class="fa-solid fa-heart"></i></button>
+    <button class="btn btn-light" @click="removeFavorite(fruit.apiId)"><i class="text-danger fa-solid fa-heart"></i></button>
   </div>
 </template>
 
@@ -47,7 +47,7 @@ export default {
 .fav__item{
   width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: flex-start;
   padding: 20px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -55,13 +55,14 @@ export default {
 }
 .fav__item_name{
   margin-right: 50px;
-  width: 50%;
+  width: 40%;
 }
 .fav__item_name h3{
-  color: darkslateblue;
   font-size: 24px;
   margin: 0 0 20px 0;
-  text-transform: uppercase;
+}
+.fav__item_nutritions{
+  width: 50%;
 }
 .fav__item_nutritions p{
   font-size: 16px;

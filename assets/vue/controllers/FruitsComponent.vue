@@ -1,22 +1,32 @@
 <template>
-  <div>
-    <p>Fruits Component</p>
+  <div v-if="loading" class="loader"></div>
+  <div v-if="!loading">
     <div class="filters__section">
-      <input type="text" v-model="searchName" placeholder="Search by name">
-      <select v-model="searchFamily">
-        <option v-for="(family, index) in families" :key="index" :value="family.family">{{ family.family }}</option>
-      </select>
-      <button @click="clearFilter">Clear</button>
+      <div class="row">
+        <div class="col-sm-4">
+          <label class="form-label"><small>Search by name</small></label>
+          <input class="form-control" type="text" v-model="searchName" placeholder="Search by name">
+        </div>
+        <div class="col-sm-4">
+          <label class="form-label"><small>Search by family</small></label>
+          <select class="form-select form-select-md mb-3" v-model="searchFamily">
+            <option v-for="(family, index) in families" :key="index" :value="family.family">{{ family.family }}</option>
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <button class="btn btn-success ms-5" @click="clearFilter">Clear</button>
+        </div>
+      </div>
     </div>
     <div v-for="fruit in paginatedData" :key="fruit.id">
       <Fruit :fruit="fruit"/>
     </div>
     <hr>
     <div v-if="!showNav">
-      <button :disabled="pageNumber === 0" @click="prevPage">
+      <button class="btn btn-primary me-3" :disabled="pageNumber === 0" @click="prevPage">
         Previous
       </button>
-      <button :disabled="pageNumber >= pageCount -1" @click="nextPage">
+      <button class="btn btn-primary ms-3" :disabled="pageNumber >= pageCount -1" @click="nextPage">
         Next
       </button>
     </div>
@@ -36,6 +46,7 @@ export default {
       searchName:'',
       searchFamily:'',
       showNav:false,
+      loading: false
     }
   },
   props:{
@@ -60,7 +71,9 @@ export default {
       }
     },
     hideNav(){
-      this.showNav = !this.showNav;
+      if(this.showNav === false || (this.showNav === true && this.searchName.length === 0 && this.searchFamily.length === 0)) {
+        this.showNav = !this.showNav;
+      }
     }
   },
   computed:{
@@ -91,6 +104,7 @@ export default {
         });
       }
       else {
+        this.clearFilter();
         return this.fruits
             .slice(start, end);
       }
@@ -99,10 +113,16 @@ export default {
   },
 
   async mounted() {
-    let { data } = await axios.get('/api/getfruits')
-    this.fruits = data.fruits;
-    this.families = data.families;
-    console.log(this.families);
+    this.loading = true;
+    try {
+      let {data} = await axios.get('/api/getfruits')
+      this.fruits = data.fruits;
+      this.families = data.families;
+      this.loading = false;
+    }catch (error){
+      console.log(error);
+      this.loading = false;
+    }
   },
   name: "FruitsComponent"
 }
@@ -110,15 +130,29 @@ export default {
 
 <style scoped>
   button{
-    width:100px;
-    height:40px;
-    background-color:#eef;
+  width: 150px;
   }
-
-  button:hover{
+ button:hover{
     cursor:pointer;
   }
   button:hover:disabled{
     cursor:not-allowed;
+  }
+  .loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

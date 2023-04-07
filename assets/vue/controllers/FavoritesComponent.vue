@@ -1,14 +1,17 @@
 <template>
-  <div>
+  <div v-if="loading" class="loader"></div>
+  <div v-if="!loading">
     <div v-for="(fav, index) in favorites" :key="fav.apiId">
       <Favorite :fruit="fav" @remove="removeFromList"/>
     </div>
-    <div class="nutrition_total">
-      <h3>Nutrition Total</h3>
-      <p>Carbohydrates: <b>{{ total.carbohydrates }}</b></p>
-      <p>Protein: <b>{{ total.protein }}</b></p>
-      <p>Fat: <b>{{ total.fat }}</b></p>
-      <p>Sugar: <b>{{ total.sugar }}</b></p>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title text-danger mb-3 text-uppercase fw-semibold fs-5 text">Nutrition Total</h3>
+        <p class="card-text fst-italic fs-6 text">Carbohydrates: <b>{{ total.carbohydrates }}</b></p>
+        <p class="card-text fst-italic fs-6 text">Protein: <b>{{ total.protein }}</b></p>
+        <p class="card-text fst-italic fs-6 text">Fat: <b>{{ total.fat }}</b></p>
+        <p class="card-text fst-italic fs-6 text">Sugar: <b>{{ total.sugar }}</b></p>
+      </div>
     </div>
   </div>
 </template>
@@ -23,6 +26,7 @@ export default {
       favoritesIds:[],
       favorites:[],
       total:[],
+      loading: false
     }
   },
   props:{
@@ -42,7 +46,6 @@ export default {
           object.splice(index, 1);
         }
       });
-      console.log(this.favorites);
       this.saveFavorites();
       this.getNutritionsTotal();
     },
@@ -69,20 +72,42 @@ export default {
   },
 
   async mounted() {
-    this.favoritesIds = JSON.parse(localStorage.getItem('favorites'));
-    let { data } = await axios.get('/api/getfavorites', {
-      params:{
-        'fruits': this.favoritesIds
-      }
-    });
-    this.favorites = data.favorites;
-    console.log(this.favorites);
-    this.getNutritionsTotal();
+    this.loading = true;
+    try {
+      this.favoritesIds = JSON.parse(localStorage.getItem('favorites'));
+      let {data} = await axios.get('/api/getfavorites', {
+        params: {
+          'fruits': this.favoritesIds
+        }
+      });
+      this.favorites = data.favorites;
+      this.getNutritionsTotal();
+      this.loading = false;
+    }catch (error){
+      console.log(error);
+      this.loading = false;
+    }
   },
   name: "FavoritesComponent"
 }
 </script>
 
 <style scoped>
+.loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #3498db;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 2s linear infinite;
+}
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>

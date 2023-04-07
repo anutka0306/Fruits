@@ -1,7 +1,7 @@
 <template>
   <div>
     {{ fruit.name }} - {{ fruit.family}}
-    <button @click="addFavorite(fruit.apiId)"><i :class="favBtn"></i></button>
+    <button class="btn btn-light" @click="addFavorite(fruit.apiId)"><i class="text-danger" :class="favBtn"></i></button>
   </div>
 </template>
 
