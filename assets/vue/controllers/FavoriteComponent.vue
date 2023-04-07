@@ -10,15 +10,33 @@
       <p>Fat: <b>{{ fruit.fat }}</b></p>
       <p>Sugar: <b>{{fruit.sugar}}</b></p>
     </div>
+    <button @click="removeFavorite(fruit.apiId)"><i class="fa-solid fa-heart"></i></button>
   </div>
 </template>
 
 <script>
 export default {
+  data(){
+    return{
+      favorites:[]
+    }
+  },
   props: {
     fruit: {
       required: true,
       type: Object
+    }
+  },
+
+  methods:{
+    removeFavorite(fruitId){
+      this.$emit('remove', fruitId);
+      this.$forceUpdate();
+    }
+  },
+  mounted() {
+    if(localStorage.getItem('favorites')) {
+      this.favorites = JSON.parse(localStorage.getItem('favorites'));
     }
   },
   name: "Favorite"
@@ -30,6 +48,7 @@ export default {
   width: 100%;
   display: flex;
   justify-content: flex-start;
+  align-items: flex-start;
   padding: 20px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   margin-bottom: 50px;

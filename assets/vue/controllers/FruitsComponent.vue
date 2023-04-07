@@ -12,12 +12,14 @@
       <Fruit :fruit="fruit"/>
     </div>
     <hr>
-    <button :disabled="pageNumber === 0" @click="prevPage">
-      Previous
-    </button>
-    <button :disabled="pageNumber >= pageCount -1" @click="nextPage">
-      Next
-    </button>
+    <div v-if="!showNav">
+      <button :disabled="pageNumber === 0" @click="prevPage">
+        Previous
+      </button>
+      <button :disabled="pageNumber >= pageCount -1" @click="nextPage">
+        Next
+      </button>
+    </div>
   </div>
 </template>
 
@@ -33,6 +35,7 @@ export default {
       pageNumber: 0,
       searchName:'',
       searchFamily:'',
+      showNav:false,
     }
   },
   props:{
@@ -52,6 +55,12 @@ export default {
     clearFilter(){
       this.searchName = '';
       this.searchFamily = '';
+      if(this.showNav === true) {
+        this.showNav = !this.showNav;
+      }
+    },
+    hideNav(){
+      this.showNav = !this.showNav;
     }
   },
   computed:{
@@ -64,16 +73,19 @@ export default {
       const start = this.pageNumber * this.size,
           end = start + this.size;
       if(this.searchName.length > 0 && this.searchFamily.length > 0){
+        this.hideNav();
         return this.fruits.filter(fruit => {
           return fruit.name.toUpperCase().indexOf(this.searchName.toUpperCase()) !== -1 && fruit.family.toUpperCase().indexOf(this.searchFamily.toUpperCase()) !== -1;
         });
       }
       else if(this.searchName.length > 0){
+        this.hideNav();
         return this.fruits.filter(fruit => {
           return fruit.name.toUpperCase().indexOf(this.searchName.toUpperCase()) !== -1;
         });
       }
       else if(this.searchFamily.length > 0){
+        this.hideNav();
         return this.fruits.filter(fruit => {
           return fruit.family.toUpperCase().indexOf(this.searchFamily.toUpperCase()) !== -1;
         });
